@@ -7,15 +7,36 @@
 //
 
 import UIKit
+import CoreData
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    
+   /* func logOut(){
+        NotificationCenter.default.addObserver(forName: Notification.Name("didLogout"), object: nil, queue: OperationQueue.main) { (Notification) in
+            print("Logout notification received")
+            // TODO: Logout the User
+            do{
+                try Auth.auth().signOut()
+                print("User signed out")
+            }
+            catch let logoutError{
+                print(logoutError.localizedDescription)
+            }
+            // TODO: Load and show the login view controller
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let loginViewController = storyboard.instantiateViewController(withIdentifier: "loginScreen")
+            self.window?.rootViewController = loginViewController
+        }
+        
+    }*/
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        FirebaseApp.configure()
         return true
     }
 
