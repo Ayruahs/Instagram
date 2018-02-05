@@ -8,17 +8,23 @@
 
 import UIKit
 import CoreData
+import FirebaseStorage
+import FirebaseAuth
 
 class ComposeViewController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
+    @IBOutlet weak var captionTextField: UITextField!
     let imagePickerController = UIImagePickerController()
+    let storage = Storage.storage(url: "gs://instagramclone-3bdaf.appspot.com/")
 
     @IBAction func onCancel(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
     @IBAction func onShare(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
+        PostService.create(for: uploadImageView.image!)
+        dismiss(animated: true, completion: nil)
     }
+    
     @IBOutlet weak var uploadImageView: UIImageView!
     
     override func viewDidLoad() {

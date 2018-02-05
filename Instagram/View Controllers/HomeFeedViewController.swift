@@ -8,8 +8,16 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseStorage
+import Kingfisher
 
-class HomeFeedViewController: UIViewController {
+class HomeFeedViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    @IBOutlet weak var tableView: UITableView!
+    
+    var posts = [Post]()
+    let storage = Storage.storage(url: "gs://instagramclone-3bdaf.appspot.com/")
+    
 
     @IBAction func logOut(_ sender: Any) {
         print("logout pressed")
@@ -36,8 +44,47 @@ class HomeFeedViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        let refreshcontrol = UIRefreshControl()
+        refreshcontrol.addTarget(self, action: #selector(refreshControlAction(_:)), for: UIControlEvents.valueChanged)
+        tableView.insertSubview(refreshcontrol, at: 0)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.estimatedRowHeight = 300
+        tableView.rowHeight = UITableViewAutomaticDimension
+        PostService.posts(for: Auth.auth().currentUser!) { (posts) in
+            self.posts = posts
+            self.tableView.reloadData()
+        }
+        
+    }
+    
+    @objc func refreshControlAction(_ refreshControl: UIRefreshControl){
+        PostService.posts(for: Auth.auth().currentUser!) { (posts) in
+            self.posts = posts
+            self.tableView.reloadData()
+        }
+        refreshControl.endRefreshing()
     }
 
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return posts.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "homeFeed", for: indexPath) as! FeedCellTableViewCell
+        
+        let post = posts[indexPath.row]
+        let imageURL = URL(string: post.imageURL)
+        
+        cell.userImageView.kf.setImage(with: imageURL)
+        print("post image url: \(post.imageURL) | \(post.key)")
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 320
+    }
     
 
     /*
